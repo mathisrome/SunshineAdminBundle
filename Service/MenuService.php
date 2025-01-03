@@ -46,7 +46,10 @@ class MenuService
 
         $autoMenu = array();
 
-        if (call_user_func_array([$currentUser, 'hasRole'], ['ROLE_ADMIN'])) {
+        if (
+            call_user_func_array([$currentUser, 'hasRole'], ['ROLE_ADMIN']) ||
+            call_user_func_array([$currentUser, 'hasRole'], ['ROLE_DATA_PRODUIT'])
+        ) {
 
             foreach ( $this->entityConfiguration as $entityName => $entityConf ) {
                 $autoMenu[] = array (
