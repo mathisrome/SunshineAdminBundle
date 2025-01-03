@@ -1,68 +1,77 @@
-{% if item.type == 'page' %}
-    <li class="m-menu__item {% if ((pageType == 'sunshine_page' or pageType == 'sunshine_page_edit') and pageIdentifier == item.parameters.id) or isCustomPageEdit( item, pageType, pageIdentifier ) %}m-menu__item--active{% endif %}" aria-haspopup="true">
-        <a href="{{ path('sunshine_page', {'pageId': item.parameters.id}) }}" class="m-menu__link">
-            {% if item.icon is defined %}
-                <i class="m-menu__link-icon flaticon-{{ item.icon }}"></i>
-            {% endif %}
-            <span class="m-menu__link-text">{{ item.label | trans }}</span>
-        </a>
-    </li>
-{% elseif item.type == 'route' %}
-    <li class="m-menu__item {% if pageType == 'custom_page' and pageIdentifier == item.route %}m-menu__item--active{% endif %}">
-        <a href="{{ path(item.route, item.parameters) }}" class="m-menu__link">
-            {% if item.icon is defined %}
-                <i class="m-menu__link-icon flaticon-{{ item.icon }}"></i>
-            {% endif %}
-            <span class="m-menu__link-text">{{ item.label | trans }}</span>
-        </a>
-    </li>
-{% elseif item.type == 'list' %}
-    <li class="m-menu__item {% if (pageType == 'sunshine_page_list' or pageType == 'sunshine_page_edit') and pageIdentifier == item.entityName %}m-menu__item--active{% endif %}">
-        <a href="{{ path('sunshine_page_list', {'entityName': item.entityName}) }}" class="m-menu__link">
-            {% if item.icon is defined %}
-                <i class="m-menu__link-icon flaticon-{{ item.icon }}"></i>
-            {% endif %}
-            <span class="m-menu__link-text">{{ item.label | trans }}</span>
+{% set allowed_labels = ['Formations', 'Sessions', 'Intervenants', 'Partenaires'] %}
+{% set user_roles = app.user.roles %}
 
-        </a>
-    </li>
+{% if
+    (not ('ROLE_DATA_PRODUIT' in user_roles) or (item.label | trans in allowed_labels))
+    or 'ROLE_SUPER_ADMIN' in user_roles
+    or 'ROLE_DATA_ADMIN' in user_roles
+    or 'ROLE_DATA_PRODUIT' in user_roles
+%}
 
-{%  elseif item.type == 'section' %}
-    <li class="m-menu__section">
-        <h4 class="m-menu__section-text">{{ item.label }}</h4>
-    </li>
-    {% for subItem in item.children %}
-        {% if isMenuItemVisible(subItem) %}
-            {% include '@TellawSunshineAdmin/Menu/menu_item.html.twig' with  {'item':subItem} %}
-        {% endif %}
-    {% endfor %}
-{% elseif item.type == 'external' %}
-    <li class="m-menu__item {% if '/admin/' ~ pageIdentifier == item.parameters.url %}m-menu__item--active{% endif %}">
-        <a href="{{ item.parameters.url }}" class="nav-link" {% if item.target is defined %}target="{{ item.target }}"{% endif %}>
-            {% if item.icon is defined %}
-                <i class="m-menu__link-icon flaticon-{{ item.icon }}"></i>
+    {% if item.type == 'page' %}
+        <li class="m-menu__item {% if ((pageType == 'sunshine_page' or pageType == 'sunshine_page_edit') and pageIdentifier == item.parameters.id) or isCustomPageEdit( item, pageType, pageIdentifier ) %}m-menu__item--active{% endif %}" aria-haspopup="true">
+            <a href="{{ path('sunshine_page', {'pageId': item.parameters.id}) }}" class="m-menu__link">
+                {% if item.icon is defined %}
+                    <i class="m-menu__link-icon flaticon-{{ item.icon }}"></i>
+                {% endif %}
+                <span class="m-menu__link-text">{{ item.label | trans }}</span>
+            </a>
+        </li>
+    {% elseif item.type == 'route' %}
+        <li class="m-menu__item {% if pageType == 'custom_page' and pageIdentifier == item.route %}m-menu__item--active{% endif %}">
+            <a href="{{ path(item.route, item.parameters) }}" class="m-menu__link">
+                {% if item.icon is defined %}
+                    <i class="m-menu__link-icon flaticon-{{ item.icon }}"></i>
+                {% endif %}
+                <span class="m-menu__link-text">{{ item.label | trans }}</span>
+            </a>
+        </li>
+    {% elseif item.type == 'list' %}
+        <li class="m-menu__item {% if (pageType == 'sunshine_page_list' or pageType == 'sunshine_page_edit') and pageIdentifier == item.entityName %}m-menu__item--active{% endif %}">
+            <a href="{{ path('sunshine_page_list', {'entityName': item.entityName}) }}" class="m-menu__link">
+                {% if item.icon is defined %}
+                    <i class="m-menu__link-icon flaticon-{{ item.icon }}"></i>
+                {% endif %}
+                <span class="m-menu__link-text">{{ item.label | trans }}</span>
+            </a>
+        </li>
+    {% elseif item.type == 'section' and not ('ROLE_DATA_PRODUIT' in user_roles) %}
+        <li class="m-menu__section">
+            <h4 class="m-menu__section-text">{{ item.label }}</h4>
+        </li>
+        {% for subItem in item.children %}
+            {% if isMenuItemVisible(subItem) %}
+                {% include '@TellawSunshineAdmin/Menu/menu_item.html.twig' with  {'item':subItem} %}
             {% endif %}
-            <span class="m-menu__link-text">{{ item.label | trans }}</span>
-        </a>
-    </li>
-{% elseif item.type == 'subMenu' %}
-    <li class="m-menu__item m-menu__item--submenu {% if isActivePageIsAChildPage( item, pageType, pageIdentifier ) %}active open{%  endif %}" aria-haspopup="true"  data-menu-submenu-toggle="hover">
-        <a href="#" class="m-menu__link m-menu__toggle">
-            {% if item.icon is defined %}
-                <i class="m-menu__link-icon flaticon-{{ item.icon }}"></i>
-            {% endif %}
-            <span class="m-menu__link-text">{{ item.label | trans}}</span>
-            <i class="m-menu__ver-arrow la la-angle-right"></i>
-        </a>
-        <div class="m-menu__submenu">
-            <span class="m-menu__arrow"></span>
-            <ul class="m-menu__subnav">
-                {% for subItem in item.children %}
-                    {% if isMenuItemVisible(subItem) %}
-                        {% include '@TellawSunshineAdmin/Menu/menu_item.html.twig' with  {'item':subItem} %}
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
-    </li>
+        {% endfor %}
+    {% elseif item.type == 'external' %}
+        <li class="m-menu__item {% if '/admin/' ~ pageIdentifier == item.parameters.url %}m-menu__item--active{% endif %}">
+            <a href="{{ item.parameters.url }}" class="nav-link" {% if item.target is defined %}target="{{ item.target }}"{% endif %}>
+                {% if item.icon is defined %}
+                    <i class="m-menu__link-icon flaticon-{{ item.icon }}"></i>
+                {% endif %}
+                <span class="m-menu__link-text">{{ item.label | trans }}</span>
+            </a>
+        </li>
+    {% elseif item.type == 'subMenu' %}
+        <li class="m-menu__item m-menu__item--submenu {% if isActivePageIsAChildPage( item, pageType, pageIdentifier ) %}active open{%  endif %}" aria-haspopup="true"  data-menu-submenu-toggle="hover">
+            <a href="#" class="m-menu__link m-menu__toggle">
+                {% if item.icon is defined %}
+                    <i class="m-menu__link-icon flaticon-{{ item.icon }}"></i>
+                {% endif %}
+                <span class="m-menu__link-text">{{ item.label | trans }}</span>
+                <i class="m-menu__ver-arrow la la-angle-right"></i>
+            </a>
+            <div class="m-menu__submenu">
+                <span class="m-menu__arrow"></span>
+                <ul class="m-menu__subnav">
+                    {% for subItem in item.children %}
+                        {% if isMenuItemVisible(subItem) %}
+                            {% include '@TellawSunshineAdmin/Menu/menu_item.html.twig' with  {'item':subItem} %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </li>
+    {% endif %}
 {% endif %}
