@@ -98,17 +98,34 @@ function activateTinyMCEIfNeeded(element) {
     if (!tinymce.get(element.id)) {
         tinymce.init({
             selector: `#${element.id}`,
-            plugins: 'lists link code preview',
-            toolbar: 'styleselect | bold italic underline strikethrough | bullist numlist | outdent indent | link | removeformat preview code', // Boutons dans l'ordre demandé
+            plugins: 'lists link code preview paste',
+            toolbar: 'styleselect | bold italic underline strikethrough | bullist numlist | outdent indent | link | removeformat preview code',
             menubar: false,
             statusbar: true,
             skin: element.dataset.theme || 'default',
-            height: 100, 
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }', 
+            height: 100,
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+            content_css: [
+                '/admin/css/pim/weka.css', // Ajoutez vos fichiers CSS ici
+                '/admin/css/pim/event.css'
+            ],
+            style_formats: [
+                {"title": "Journée", "selector": "p", "block": "p", "classes": "jour"},
+                {"title": "Intertitre de la journée", "selector": "p", "block": "p", "classes": "sujet"},
+                {"title": "Titre de module", "selector": "p", "block": "p", "classes": "module"},
+                {"title": "Texte standard", "selector": "p", "block": "p", "classes": "detail"},
+                {"title": "Cas pratique titre 1", "selector": "p", "block": "p", "classes": "pratique-titre"},
+                {"title": "Cas pratique texte", "selector": "p", "block": "p", "classes": "pratique"},
+                {"title": "Cas pratique titre 2", "selector": "p", "block": "p", "classes": "pratique-titre-2"},
+                {"title": "Cas pratique mot", "inline": "span", "classes": "pratique-2"},
+                {"title": "Titre validation", "selector": "p", "block": "p", "classes": "validation-titre"},
+                {"title": "Texte validation", "selector": "p", "block": "p", "classes": "validation"},
+                {"title": "Pause", "selector": "p", "block": "p", "classes": "pause"}
+            ]
         });
-       
     } 
 }
+
 
 
 
