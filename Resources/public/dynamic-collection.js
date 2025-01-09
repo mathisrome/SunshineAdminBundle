@@ -99,7 +99,7 @@ function activateTinyMCEIfNeeded(element) {
         tinymce.init({
             selector: `#${element.id}`,
             plugins: 'lists link code preview',
-            toolbar: 'bold italic underline strikethrough | bullist numlist | outdent indent | link | removeformat preview code', // Boutons dans l'ordre demandé
+            toolbar: 'styleselect | bold italic underline strikethrough | bullist numlist | outdent indent | link | removeformat preview code', // Boutons dans l'ordre demandé
             menubar: false,
             statusbar: true,
             skin: element.dataset.theme || 'default',
